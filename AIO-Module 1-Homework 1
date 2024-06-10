@@ -1,0 +1,203 @@
+1- Viết function thực hiện đánh giá classification model bằng F1-Score.
+def exercise1(tp, fp, fn):
+    # Kiểm tra tp, fp, fn có phải là int không
+    if not isinstance(tp, int):
+        print('tp must be int')
+        return
+    if not isinstance(fp, int):
+        print('fp must be int')
+        return
+    if not isinstance(fn, int):
+        print('fn must be int')
+        return
+
+    # Kiểm tra tp, fp, fn phải lớn hơn 0
+    if tp <= 0 or fp <= 0 or fn <= 0:
+        print('tp and fp and fn must be greater than zero')
+        return
+
+    # Tính Precision, Recall, và F1-score
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    f1_score = 2 * (precision * recall) / (precision + recall)
+
+    # Print kết quả
+    print('precision is', precision)
+    print('recall is', recall)
+    print('f1-score is', f1_score)
+
+# Examples
+exercise1(tp=2, fp=3, fn=4)
+exercise1(tp='a', fp=3, fn=4)
+exercise1(tp=2, fp='a', fn=4)
+exercise1(tp=2, fp=3, fn='a')
+exercise1(tp=2, fp=3, fn=0)
+exercise1(tp=2.1, fp=3, fn=4)
+__________________________________
+
+2-Viết function mô phỏng theo 3 activation function
+import math
+
+def is_number(n):
+    try:
+        float(n)  # Type-casting the string to ‘float ‘.
+    except ValueError:
+        return False
+    return True
+
+def exercise2():
+    x = input("Input x: ")
+    if not is_number(x):
+        print("x must be a number")
+        return
+    x = float(x)
+
+    activation_function = input("Input activation Function (sigmoid | relu | elu): ").lower()
+    if activation_function not in ["sigmoid", "relu", "elu"]:
+        print(f"{activation_function} is not supported")
+        return
+
+    if activation_function == "sigmoid":
+        result = 1 / (1 + math.exp(-x))
+    elif activation_function == "relu":
+        result = max(0, x)
+    elif activation_function == "elu":
+        alpha = 0.01
+        result = x if x > 0 else alpha * (math.exp(x) - 1)
+
+    print(f"{activation_function}: f({x}) = {result}")
+# Example
+Input x: 1.5
+Input activation Function (sigmoid | relu | elu): sigmoid
+sigmoid: f(1.5) = 0.8175744761936437
+
+Input x: abc
+x must be a number
+
+Input x: 1.5
+Input activation Function (sigmoid | relu | elu): belu
+belu is not supported
+_____________________________________
+
+3-Viết function lựa chọn regression loss function để tính loss
+import random
+import math
+
+def exercise3():
+    num_samples = input("Input number of samples (integer number) which are generated: ")
+    if not num_samples.isnumeric():
+        print("number of samples must be an integer number")
+        return
+    
+    num_samples = int(num_samples)
+    loss_name = input("Input loss name (MAE, MSE, RMSE): ").upper()
+
+    predictions = [random.uniform(0, 10) for _ in range(num_samples)]
+    targets = [random.uniform(0, 10) for _ in range(num_samples)]
+
+    if loss_name == "MAE":
+        loss = sum(abs(predictions[i] - targets[i]) for i in range(num_samples)) / num_samples
+    elif loss_name == "MSE":
+        loss = sum((predictions[i] - targets[i]) ** 2 for i in range(num_samples)) / num_samples
+    elif loss_name == "RMSE":
+        mse = sum((predictions[i] - targets[i]) ** 2 for i in range(num_samples)) / num_samples
+        loss = math.sqrt(mse)
+    else:
+        print(f"{loss_name} is not supported")
+        return
+
+    for i in range(num_samples):
+        pred = predictions[i]
+        target = targets[i]
+        if loss_name == "MAE":
+            loss_value = abs(pred - target)
+        elif loss_name == "MSE":
+            loss_value = (pred - target) ** 2
+        elif loss_name == "RMSE":
+            loss_value = (pred - target) ** 2
+        print(f"loss name: {loss_name}, sample: {i}, pred: {pred}, target: {target}, loss: {loss_value}")
+    
+    if loss_name == "RMSE":
+        print(f"final {loss_name}: {loss}")
+    else:
+        print(f"final {loss_name}: {loss}")
+
+# Examples
+exercise3()
+Input number of samples (integer number) which are generated: 5
+Input loss name (MAE, MSE, RMSE): RMSE
+loss name: RMSE, sample: 0, pred: 6.659262156575629, target: 4.5905830130732355, loss: 4.279433398761796
+loss name: RMSE, sample: 1, pred: 4.592264312227207, target: 8.447168720237958, loss: 14.860287994900718
+loss name: RMSE, sample: 2, pred: 8.701801828625959, target: 9.280646891626386, loss: 0.3350616069599687
+loss name: RMSE, sample: 3, pred: 4.799972972282257, target: 9.877147335937869, loss: 25.777699518961764
+loss name: RMSE, sample: 4, pred: 0.20159822778697878, target: 5.540221923628147, loss: 28.50090296579681
+final RMSE: 3.8406610234536727
+
+Input number of samples (integer number) which are generated: aa
+number of samples must be an integer number
+
+_________________________________________
+
+4-Viết 4 functions để ước lượng các hàm số
+def factorial(num):
+    if num == 0 or num == 1:
+        return 1
+    result = 1
+    for i in range(2, num + 1):
+        result *= i
+    return result
+
+def approx_sin(x, n):
+    if n <= 0:
+        return "n must be a positive integer greater than 0"
+    result = 0
+    for i in range(n):
+        term = ((-1) ** i) * (x ** (2 * i + 1)) / factorial(2 * i + 1)
+        result += term
+    return result
+
+def approx_cos(x, n):
+    if n <= 0:
+        return "n must be a positive integer greater than 0"
+    result = 0
+    for i in range(n):
+        term = ((-1) ** i) * (x ** (2 * i)) / factorial(2 * i)
+        result += term
+    return result
+
+def approx_sinh(x, n):
+    if n <= 0:
+        return "n must be a positive integer greater than 0"
+    result = 0
+    for i in range(n):
+        term = (x ** (2 * i + 1)) / factorial(2 * i + 1)
+        result += term
+    return result
+
+def approx_cosh(x, n):
+    if n <= 0:
+        return "n must be a positive integer greater than 0"
+    result = 0
+    for i in range(n):
+        term = (x ** (2 * i)) / factorial(2 * i)
+        result += term
+    return result
+
+# Examples
+print(approx_sin(x=3.14, n=10))  # Example output: 0.0015926529267151343
+print(approx_cos(x=3.14, n=10))  # Example output: -0.9999987316527259
+print(approx_sinh(x=3.14, n=10)) # Example output: 11.53029203039954
+print(approx_cosh(x=3.14, n=10)) # Example output: 11.573574828234543
+
+_____________________________________
+
+5- Viết function thực hiện Mean Difference of n th Root Error 
+def MD_nRE(y, y_hat, n, p):
+    return sum((y**(1/n) - y_hat**(1/n))**(p))/len(y)
+def md_nre_single_sample(y, y_hat, n, p):
+    return (y**(1/n) - y_hat**(1/n))**(p)
+
+print(md_nre_single_sample(y=100, y_hat=99.5, n=2, p=1))
+print(md_nre_single_sample(y=50, y_hat=49.5, n=2, p=1))
+print(md_nre_single_sample(y=20, y_hat=19.5, n=2, p=1))
+print(md_nre_single_sample(y=0.6, y_hat=0.1, n=2, p=1))
