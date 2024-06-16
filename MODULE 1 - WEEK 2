@@ -1,0 +1,119 @@
+1 -
+from collections import deque
+
+def max_sliding_window(num_list, k):
+    if k <= 0:
+        return []
+    
+    n = len(num_list)
+    if k > n:
+        return []
+
+    result = []
+    deque_index = deque()
+
+    for i in range(n):
+        # Remove indices out of current window
+        if deque_index and deque_index[0] <= i - k:
+            deque_index.popleft()
+        
+        # Remove elements from deque which are less than current element
+        while deque_index and num_list[deque_index[-1]] <= num_list[i]:
+            deque_index.pop()
+        
+        # Add current element index to deque
+        deque_index.append(i)
+        
+        # Append the maximum element of current window to result
+        if i >= k - 1:
+            result.append(num_list[deque_index[0]])
+    
+    return result
+
+# Test case
+num_list = [3, 4, 5, 1, -44, 5, 10, 12, 33, 1]
+k = 3
+print(max_sliding_window(num_list, k))  # Output: [5, 5, 5, 5, 10, 12, 33, 33]
+
+_______________________________________________________
+
+2 -
+def count_chars(word):
+    char_count = {}
+    
+    # Loop through each character in the word
+    for char in word:
+        if char.isalpha():  # Check if the character is an alphabet letter
+            char_lower = char.lower()  # Convert character to lowercase
+            if char_lower in char_count:
+                char_count[char_lower] += 1
+            else:
+                char_count[char_lower] = 1
+    
+    return char_count
+
+# Test cases
+string = 'Happiness'
+print(count_chars(string))  # Output: {'h': 1, 'a': 1, 'p': 2, 'i': 1, 'n': 1, 'e': 1, 's': 2}
+
+string = 'smiles'
+print(count_chars(string))  # Output: {'s': 2, 'm': 1, 'i': 1, 'l': 1, 'e': 1}
+
+____________________________________________________
+
+3 -
+def word_count(file_path):
+    word_freq = {}
+
+    # Open the file and read each line
+    with open(file_path, 'r') as file:
+        for line in file:
+            # Split each line into words
+            words = line.strip().split()
+            for word in words:
+                # Convert word to lowercase to ensure case insensitivity
+                word_lower = word.lower()
+                # Update word frequency dictionary
+                if word_lower in word_freq:
+                    word_freq[word_lower] += 1
+                else:
+                    word_freq[word_lower] = 1
+    
+    return word_freq
+
+# Example usage
+file_path = '/content/P1_data.txt'  # Đường dẫn tới file văn bản
+result = word_count(file_path)
+print(result)
+
+________________________________________________
+
+4 - 
+def levenshtein_distance(source, target):
+    # Độ dài của từng chuỗi
+    m = len(source)
+    n = len(target)
+    
+    # Tạo ma trận D có (m+1) hàng và (n+1) cột, ban đầu khởi tạo giá trị là 0
+    D = [[0] * (n + 1) for _ in range(m + 1)]
+    
+    # Khởi tạo hàng đầu tiên và cột đầu tiên của ma trận D
+    for i in range(1, m + 1):
+        D[i][0] = i  # Phép xoá
+    for j in range(1, n + 1):
+        D[0][j] = j  # Phép thêm
+    
+    # Tính toán các giá trị của ma trận D
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            cost = 0 if source[i - 1] == target[j - 1] else 1
+            D[i][j] = min(D[i-1][j] + 1,      # Xoá
+                          D[i][j-1] + 1,      # Thêm
+                          D[i-1][j-1] + cost) # Thay thế hoặc giữ nguyên
+    
+    # Kết quả là giá trị ở ô cuối cùng của ma trận
+    return D[m][n]
+
+# Test cases
+print(levenshtein_distance("kitten", "sitting"))    # Kết quả là 3
+print(levenshtein_distance("yu", "you"))            # Kết quả là 1
