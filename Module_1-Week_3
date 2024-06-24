@@ -1,0 +1,276 @@
+1
+# VIET CLASS VA CAI CONG THUC SOFTMAX
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class Softmax(nn.Module):
+    def __init__(self):
+        super(Softmax, self).__init__()
+    
+    def forward(self, x):
+        exp_x = torch.exp(x)
+        sum_exp_x = torch.sum(exp_x)
+        return exp_x / sum_exp_x
+
+class SoftmaxStable(nn.Module):
+    def __init__(self):
+        super(SoftmaxStable, self).__init__()
+    
+    def forward(self, x):
+        c = torch.max(x)
+        exp_x = torch.exp(x - c)
+        sum_exp_x = torch.sum(exp_x)
+        return exp_x / sum_exp_x
+
+# Example usage
+data = torch.Tensor([1, 2, 3])
+
+softmax = Softmax()
+output = softmax(data)
+print(output)  # Expected output: tensor([0.0900, 0.2447, 0.6652])
+
+softmax_stable = SoftmaxStable()
+output_stable = softmax_stable(data)
+print(output_stable)  # Expected output: tensor([0.0900, 0.2447, 0.6652])
+
+_________________________________________
+
+2
+(a)
+class Person:
+    def __init__(self, name, yob):
+        self.name = name
+        self.yob = yob
+
+    def describe(self):
+        raise NotImplementedError("Subclasses should implement this method")
+
+class Student(Person):
+    def __init__(self, name, yob, grade):
+        super().__init__(name, yob)
+        self.grade = grade
+
+    def describe(self):
+        print(f"Student - Name: {self.name} - YoB: {self.yob} - Grade: {self.grade}")
+
+class Teacher(Person):
+    def __init__(self, name, yob, subject):
+        super().__init__(name, yob)
+        self.subject = subject
+
+    def describe(self):
+        print(f"Teacher - Name: {self.name} - YoB: {self.yob} - Subject: {self.subject}")
+
+class Doctor(Person):
+    def __init__(self, name, yob, specialist):
+        super().__init__(name, yob)
+        self.specialist = specialist
+
+    def describe(self):
+        print(f"Doctor - Name: {self.name} - YoB: {self.yob} - Specialist: {self.specialist}")
+
+# Examples
+student1 = Student(name="studentA", yob=2010, grade="7")
+student1.describe()  # Student - Name: studentA - YoB: 2010 - Grade: 7
+
+teacher1 = Teacher(name="teacherA", yob=1969, subject="Math")
+teacher1.describe()  # Teacher - Name: teacherA - YoB: 1969 - Subject: Math
+
+doctor1 = Doctor(name="doctorA", yob=1945, specialist="Endocrinologists")
+doctor1.describe()  # Doctor - Name: doctorA - YoB: 1945 - Specialist: Endocrinologists
+
+(b)
+class Ward:
+    def __init__(self, name):
+        self.name = name
+        self.people = []
+
+    def add_person(self, person):
+        self.people.append(person)
+
+    def describe(self):
+        print(f"Ward Name: {self.name}")
+        for person in self.people:
+            person.describe()
+
+# Example usage
+print()
+teacher2 = Teacher(name="teacherB", yob=1995, subject="History")
+doctor2 = Doctor(name="doctorB", yob=1975, specialist="Cardiologists")
+ward1 = Ward(name="Ward1")
+ward1.add_person(student1)
+ward1.add_person(teacher1)
+ward1.add_person(teacher2)
+ward1.add_person(doctor1)
+ward1.add_person(doctor2)
+ward1.describe()
+
+(c)
+class Ward:
+    def __init__(self, name):
+        self.name = name
+        self.people = []
+
+    def add_person(self, person):
+        self.people.append(person)
+
+    def describe(self):
+        print(f"Ward Name: {self.name}")
+        for person in self.people:
+            person.describe()
+
+    def count_doctor(self):
+        return sum(isinstance(person, Doctor) for person in self.people)
+
+# Example usage
+print(f"\nNumber of doctors: {ward1.count_doctor()}")
+
+(d)
+class Ward:
+    def __init__(self, name):
+        self.name = name
+        self.people = []
+
+    def add_person(self, person):
+        self.people.append(person)
+
+    def describe(self):
+        print(f"Ward Name: {self.name}")
+        for person in self.people:
+            person.describe()
+
+    def count_doctor(self):
+        return sum(isinstance(person, Doctor) for person in self.people)
+
+    def sort_age(self):
+        self.people.sort(key=lambda person: person.yob, reverse=True)
+
+# Example usage
+print("\nAfter sorting Age of Ward1 people")
+ward1.sort_age()
+ward1.describe()
+
+(e)
+class Ward:
+    def __init__(self, name):
+        self.name = name
+        self.people = []
+
+    def add_person(self, person):
+        self.people.append(person)
+
+    def describe(self):
+        print(f"Ward Name: {self.name}")
+        for person in self.people:
+            person.describe()
+
+    def count_doctor(self):
+        return sum(isinstance(person, Doctor) for person in self.people)
+
+    def sort_age(self):
+        self.people.sort(key=lambda person: person.yob, reverse=True)
+
+    def compute_average(self):
+        teachers = [person for person in self.people if isinstance(person, Teacher)]
+        if not teachers:
+            return 0
+        total_yob = sum(teacher.yob for teacher in teachers)
+        return total_yob / len(teachers)
+
+# Example usage
+print(f"\nAverage year of birth (teachers): {ward1.compute_average()}")
+
+______________________________________________
+
+3
+class Stack:
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.stack = []
+    
+    def is_empty(self):
+        return len(self.stack) == 0
+    
+    def is_full(self):
+        return len(self.stack) == self.capacity
+    
+    def pop(self):
+        if self.is_empty():
+            return None
+        return self.stack.pop()
+    
+    def push(self, value):
+        if self.is_full():
+            return "Stack is full"
+        self.stack.append(value)
+    
+    def top(self):
+        if self.is_empty():
+            return None
+        return self.stack[-1]
+
+# Example usage
+stack1 = Stack(capacity=5)
+
+stack1.push(1)
+stack1.push(2)
+
+print(stack1.is_full())  # Output: False
+
+print(stack1.top())  # Output: 2
+
+print(stack1.pop())  # Output: 2
+
+print(stack1.top())  # Output: 1
+
+print(stack1.pop())  # Output: 1
+
+print(stack1.is_empty())  # Output: True
+
+_______________________________________________
+
+4
+class Queue:
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.queue = []
+    
+    def is_empty(self):
+        return len(self.queue) == 0
+    
+    def is_full(self):
+        return len(self.queue) == self.capacity
+    
+    def dequeue(self):
+        if self.is_empty():
+            return None
+        return self.queue.pop(0)
+    
+    def enqueue(self, value):
+        if self.is_full():
+            return "Queue is full"
+        self.queue.append(value)
+    
+    def front(self):
+        if self.is_empty():
+            return None
+        return self.queue[0]
+
+# Example usage
+queue1 = Queue(capacity=5)
+
+queue1.enqueue(1)
+queue1.enqueue(2)
+
+print(queue1.is_full())  # Output: False
+
+print(queue1.front())  # Output: 1
+
+print(queue1.dequeue())  # Output: 1
+
+print(queue1.front())  # Output: 2
+
+print(queue1.dequeue())  # Output: 2
+
+print(queue1.is_empty())  # Output: True
